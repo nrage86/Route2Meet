@@ -11,5 +11,6 @@
     <string name="title_activity_obter_percursos">ObterPercursos</string>
     <string name="title_activity_percurso">Percurso</string>
     <string name="title_mapa_activity">Mapa</string>
+    <string name="title_activity_location_overlay">LocationOverlay</string>
 
 </resources>

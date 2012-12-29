@@ -17,7 +17,8 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        <uses-library android:name="com.google.android.maps"/>
+        <uses-library android:name="com.google.android.maps" />
+
         <activity
             android:name="com.simov.trabalho2.route2meet.MainActivity"
             android:label="@string/app_name" >
@@ -42,6 +43,10 @@
         <activity
             android:name="com.simov.trabalho2.route2meet.Mapa"
             android:label="@string/title_mapa_activity" >
+        </activity>
+        <activity
+            android:name="com.simov.trabalho2.route2meet.LocationOverlayAdapter"
+            android:label="@string/title_activity_location_overlay" >
         </activity>
     </application>
 
