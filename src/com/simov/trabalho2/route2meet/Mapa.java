@@ -30,16 +30,17 @@ import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 
 
-/************************************************************************************
- * Mostra o mapa do "google maps" com as rotas como overlay
- ***********************************************************************************/
+/****************************************************************************************
+ * Mapa
+ * - Mostra o mapa do "google maps" com as rotas como overlay
+ ***************************************************************************************/
 public class Mapa extends MapActivity{
-	
+	/** Variaveis globais*/
+	private static final String TAG = "Mapa Activity";
 	private MapController mapController;
 	private LocationManager locationManager;
-	private Location currentLocation;
-
-	/** Handle location callback events*/
+	//private Location currentLocation;
+	/* Handle location callback events*/
 	/* 
 	private final LocationListener locationListener = new LocationListener(){
 		public void onLocationChanged(Location location) {
@@ -70,9 +71,14 @@ public class Mapa extends MapActivity{
         
         /** Variaveis */
         //int lat, lng;
+        int counter=0;
+        ArrayList<GeoPoint> coordenadasRota = new ArrayList<GeoPoint>();
+        ArrayList<String> coordenadasRotaString = new ArrayList<String>();
+        ArrayList<GeoPoint> specialLocationsRota = new ArrayList<GeoPoint>();
+        String[] coordenadasString;
         
         /** Serve para receber location updates (in foreground)*/
-        //locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         
         /** Vai buscar a ultima posição GPS para o currentLocation*/
         /*
@@ -88,75 +94,35 @@ public class Mapa extends MapActivity{
         }       
         */
         
-        /** Configure the map display options*/
-        /*
-        mapController = myMapView.getController();
-        myMapView.setSatellite(false);
-        myMapView.displayZoomControls(false);
-        myMapView.setBuiltInZoomControls(true);
-        GeoPoint mapCenter = new GeoPoint(lat,lng);
-        mapController.setCenter(mapCenter);
-        mapController.setZoom(15);
-        */
+        /** Adiciona pontos da rota (recebidos num array de strings da Activity Percurso)
+         *  ao array coordenadasRota*/
+        coordenadasRotaString = getIntent().getStringArrayListExtra("coordenadasRotaString");
+        counter=coordenadasRotaString.size();
         
-       
-        
-        /** */
-        ArrayList<GeoPoint> locationsTeste = new ArrayList<GeoPoint>();
-        String[] separated ;
-        
-        ArrayList<String> locationsTeste2 = new ArrayList<String>();
-        locationsTeste2 = getIntent().getStringArrayListExtra("locationTeste2");
-        
-        for (String string : locationsTeste2) {
-        	separated = string.split(";");
-        	locationsTeste.add(new GeoPoint(Integer.parseInt(separated[0]),Integer.parseInt(separated[1])));
+        for (String coordenadasPonto : coordenadasRotaString) {
+        	coordenadasString = coordenadasPonto.split(";");	
+        	// Se for a primeira posição da rota (Vai aparecer um icon)
+        	if(counter==coordenadasRotaString.size())
+        		specialLocationsRota.add(new GeoPoint(Integer.parseInt(coordenadasString[0]),Integer.parseInt(coordenadasString[1])));
+        	// Se for a ultima posição da rota (Vai aparecer um icon)
+        	if(counter==1)
+        		specialLocationsRota.add(new GeoPoint(Integer.parseInt(coordenadasString[0]),Integer.parseInt(coordenadasString[1])));
+        	
+        	coordenadasRota.add(new GeoPoint(Integer.parseInt(coordenadasString[0]),Integer.parseInt(coordenadasString[1])));
+        	counter--;
 		}
-
         
-        
-        
-        
-        /** Adiciona pontos de interesse ao array locations*/
-        /*
-        ArrayList<GeoPoint> locations = new ArrayList<GeoPoint>();
-        //Rotunda da Boavista PORTO
-        locations.add(new GeoPoint(41159026,-8635694));
-        locations.add(new GeoPoint(41158074,-8630410));
-        locations.add(new GeoPoint(41157702,-8630345));
-        locations.add(new GeoPoint(41157411,-8630195));
-        locations.add(new GeoPoint(41157145,-8629906));
-        locations.add(new GeoPoint(41156935,-8629380));
-        locations.add(new GeoPoint(41156531,-8629487));
-        locations.add(new GeoPoint(41156483,-8628972));
-        locations.add(new GeoPoint(41156264,-8628725));
-        locations.add(new GeoPoint(41155925,-8628779));
-        locations.add(new GeoPoint(41155368,-8628275));
-        locations.add(new GeoPoint(41155736,-8627510));
-        */
-        
-        /** Adiciona pontos de interesse especiais ao array locations. Nestes pontos
-         *  vao aparecer icons*/
-        ArrayList<GeoPoint> specialLocations = new ArrayList<GeoPoint>();
-        /* Pontos especiais */
-        // Inicio
-        specialLocations.add(new GeoPoint(41159026,-8635694));
-        // Meio
-        specialLocations.add(new GeoPoint(41156935,-8629380));
-        // Fim
-        specialLocations.add(new GeoPoint(41155736,-8627510));
-        
-        /** Mostra no mapa os pontos do array locations com um icon*/
+        /** Configuração do mapa e overlays*/
         LocationOverlayAdapter myOverlay =
         		new LocationOverlayAdapter(getResources().getDrawable(R.drawable.ic_launcher));
-		myOverlay.setItems(locationsTeste,specialLocations);
+		myOverlay.setItems(coordenadasRota,specialLocationsRota);
 		myMapView.getOverlays().add(myOverlay);
         myMapView.setSatellite(false);
         myMapView.displayZoomControls(false);
         myMapView.setBuiltInZoomControls(true);
         mapController = myMapView.getController();
-		mapController.setCenter(locationsTeste.get(0));
-		mapController.setZoom(15);
+		mapController.setCenter(coordenadasRota.get(0));
+		mapController.setZoom(16);
     }
 	
 	/************************************************************************************
@@ -208,7 +174,46 @@ public class Mapa extends MapActivity{
 		*/
 	}
 	
-	/** Actualiza com nova localização GPS*/
+	/************************************************************************************
+	 * onStart
+	 ***********************************************************************************/
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart()" + this);
+    }
+
+	/************************************************************************************
+	 * onPause
+	 ***********************************************************************************/
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause()" + this);
+    }
+
+	/************************************************************************************
+	 * onStop
+	 ***********************************************************************************/
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop()" + this);
+    }
+
+	/************************************************************************************
+	 * onDestroy
+	 ***********************************************************************************/
+    @Override
+    public void onDestroy() {
+        super.onStop();
+        Log.d(TAG, "onDestroy()" + this);
+    }
+	
+	/************************************************************************************
+	 * updateWithNewLocation
+	 * - Actualiza com nova localização GPS
+	 ***********************************************************************************/
 	/*
 	private void updateWithNewLocation(Location location) {
     	String latLongString = "Unknown";
@@ -247,7 +252,10 @@ public class Mapa extends MapActivity{
     	myLocationText.setText("Your Current Position is:\n" + latLongString + "\n" + addressString);
     }	
     */
-			
+		
+	/************************************************************************************
+	 * isRouteDisplayed
+	 ***********************************************************************************/
 	@Override
 	protected boolean isRouteDisplayed() {
 		// TODO Auto-generated method stub

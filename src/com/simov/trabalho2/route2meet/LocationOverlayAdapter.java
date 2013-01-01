@@ -21,8 +21,14 @@ import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.view.Menu;
 
+
+/****************************************************************************************
+ * LocationOverlayAdapter
+ * - Trata dos overlays no mapa (icons e rotas)
+ ***************************************************************************************/
 public class LocationOverlayAdapter extends ItemizedOverlay<OverlayItem> {
-	
+	/** Variaveis globais*/
+	private static final String TAG = "LocationOverlayAdapter";
 	private List<GeoPoint> locations;
 	private List<GeoPoint> specialLocations;
 	
@@ -63,21 +69,11 @@ public class LocationOverlayAdapter extends ItemizedOverlay<OverlayItem> {
        paint.setStrokeWidth(4);
        paint.setAlpha(80);
        paint.setPathEffect(new CornerPathEffect(10));
-       
-       
-       
-       
-       //Point pt1 = new Point();
-       //Point pt2[] = new Point();
        Path path = new Path();
        Point startPoint = null; 
        Point endPoint = null;
        Projection projection = mapView.getProjection();
-       
 
-       
-       
-       
        for (int i = 0; i < locations.size(); i++) {
     	   GeoPoint gPointA = locations.get(i);
     	   Point pointA = new Point();
@@ -92,9 +88,6 @@ public class LocationOverlayAdapter extends ItemizedOverlay<OverlayItem> {
     		   path.lineTo(pointA.x, pointA.y);
     	   }
 	   }
-       
-       
-       
        
        canvas.drawPath(path, paint);
        return true;
